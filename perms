@@ -1,0 +1,19 @@
+
+def string_perm(i_string):
+""" input = string, returns list of string combinations
+This is a classic, insert a character in all positions of a given string to 
+calcualte the varius perumtations """
+	if len(i_string)==0 or len(i_string)==1:
+		return i_string
+	
+	current_vaues = []
+  
+	for i in xrange(len(i_string)):
+		first_char = i_string[i]
+		rem_string = i_string[:i] + i_string[i+1:]
+		for char in string_perm(rem_string):
+			current_vaues.append(first_char+char)
+	return current_vaues
+
+
+print string_perm(s)
