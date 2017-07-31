@@ -1,0 +1,136 @@
+
+
+import sys
+import getopt
+import fileinput
+
+#> python test.py honeycomb.txt dict.txt
+[['5'], ['A'], ['B', 'C', 'D', 'E', 'F', 'G'], ['U', 'A', 'N', 'T', 'C', 'A', 'S', 'T', 'Y', 'S', 'W', 'Q'], ['E', 'O', 'R', 'N', 'O', 'T', 'O', 'B', 'E', 'K', 'A', 'N', 'G', 'A', 'R', 'T', 'O', 'B'], ['L', 'U', 'Y', 'A', 'G', 'I', 'M', 'M', 'X', 'V', 'R', 'H', 'P', 'J', 'I', 'T', 'S', 'O', 'O', 'T', 'H', 'E', 'P', 'Z'], []]
+['QUANTCAST', 'FADE', 'GRABS', 'CASTE', 'CAST', 'DEAF', 'CASTED', 'CASTLE', 'BAGS', 'QUANTCATS', 'BAG', 'BUG', 'DEFEAT', 'FADED', 'DEFACTO', 'EAST', 'YEAST']
+
+def create_cube_coordinates(input_list):
+
+    """ Create cube coordinate to map all the various coordinates and return coordinates for each layer of hexagon"""
+
+    radius = int(input_list[0][0])
+    deltas = [[1,0,-1],[0,1,-1],[-1,1,0],[-1,0,1],[0,-1,1],[1,-1,0]]
+    coordinates = []
+
+    for r in range(radius):
+        x = 0
+        y = -r
+        z = +r
+        coordinates.append((x,y,z))
+        for j in range(6):
+            if j==5:
+                num_of_hexas_in_edge = r-1
+            else:
+                num_of_hexas_in_edge = r
+            for i in range(num_of_hexas_in_edge):
+                x = x+deltas[j][0]
+                y = y+deltas[j][1]
+                z = z+deltas[j][2]
+                coordinates.append((x,y,z))
+    return coordinates
+
+def char_list(input_list):
+
+    """ Flatten nested lists into a single list"""
+
+    return [item for sublist in input_list[1:] for item in sublist]
+
+
+def serialize_coordinate(coordinate):
+
+    """ Serialize coodinate values by converting to string"""
+
+    return ','.join(map(lambda x: str(x), coordinate))
+
+
+def get_neighbors(coordinate):
+
+    """get handy helper functions to fetch neighboring coordinates"""
+
+    cube_directions = [ (1, -1, 0), (1, 0, -1), ( 0, 1, -1), (-1, 1, 0), (-1, 0, 1), ( 0, -1, 1) ]
+
+    x, y, z = coordinate
+    results = []
+    for direction in cube_directions:
+        dx, dy, dz = direction
+        results.append((x + dx, y + dy, z + dz))
+    return results
+
+
+def find_paths_for_word(word,l_c_map, c_l_map):
+    
+    """find all possible paths in the hexagonal grid given a word - this does the bulk of the work.
+       start with the first letter of the word, find  set of unvisited neighbors and see if they match the next letter and keep appending to 
+       the string and once we hit the len of the full string, we found a path"""
+    
+    letters = list(word)
+    first_letter = letters[0]
+
+    letter_to_coordinates = l_c_map
+    coordinate_to_letter =  c_l_map
+
+
+    queue = map(lambda x: [x], letter_to_coordinates[first_letter])
+    found_paths = []
+
+    while len(queue) != 0:
+        current_path = queue.pop(0)
+        word_completed = len(current_path) is len(letters)
+
+        if word_completed:
+            found_paths.append(current_path)
+        else:
+            last_coordinate = current_path[-1]
+            next_letter = letters[len(current_path)]
+            neighbors = get_neighbors(last_coordinate)
+
+            for neighbor in neighbors:
+                serialized_neighbor = serialize_coordinate(neighbor)
+                is_in_grid = serialized_neighbor in coordinate_to_letter
+                is_not_visited = neighbor not in current_path
+                if is_in_grid and is_not_visited:
+                    neighbor_letter = coordinate_to_letter[serialized_neighbor]
+                    is_next_letter = next_letter is neighbor_letter
+                    if is_next_letter:
+                        new_path = list(current_path)
+                        new_path.append(neighbor)
+                        queue.append(new_path)
+    return found_paths
+
+
+def main():
+
+    honeycomb_i = [list(item) for item in open(sys.argv[1]).read().splitlines()]
+    word_list = [item for item in open(sys.argv[2]).read().splitlines()]
+
+    flat_list = char_list(honeycomb_i)
+    coordinates = create_cube_coordinates(honeycomb_i)
+
+    grid = zip(flat_list,coordinates)
+
+    letter_to_coordinates = {}
+    for val in grid:
+        letter, coordinate = val
+        try:
+            letter_to_coordinates[letter].append(coordinate)
+        except KeyError:
+            letter_to_coordinates[letter] = [coordinate]
+
+    coordinate_to_letter = {}
+    for val in grid:
+        letter, coordinate = val
+        serialized_coordinate = serialize_coordinate(coordinate)
+        coordinate_to_letter[serialized_coordinate] = letter
+
+
+    for word in word_list:
+        if len(find_paths_for_word(word,letter_to_coordinates, coordinate_to_letter)) > 0:
+            print word
+
+
+if __name__ == '__main__':
+  main()
