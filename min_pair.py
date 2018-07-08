@@ -1,3 +1,6 @@
+""" return the pair of elements from two arrays which have the smallest different"""
+
+
 #sort the arrays first 
 
 a= [1,2,3,4,5,19]
