@@ -6,7 +6,7 @@ import fileinput
 
 #> python test.py honeycomb.txt dict.txt
 [['5'], ['A'], ['B', 'C', 'D', 'E', 'F', 'G'], ['U', 'A', 'N', 'T', 'C', 'A', 'S', 'T', 'Y', 'S', 'W', 'Q'], ['E', 'O', 'R', 'N', 'O', 'T', 'O', 'B', 'E', 'K', 'A', 'N', 'G', 'A', 'R', 'T', 'O', 'B'], ['L', 'U', 'Y', 'A', 'G', 'I', 'M', 'M', 'X', 'V', 'R', 'H', 'P', 'J', 'I', 'T', 'S', 'O', 'O', 'T', 'H', 'E', 'P', 'Z'], []]
-['QUANTCAST', 'FADE', 'GRABS', 'CASTE', 'CAST', 'DEAF', 'CASTED', 'CASTLE', 'BAGS', 'QUANTCATS', 'BAG', 'BUG', 'DEFEAT', 'FADED', 'DEFACTO', 'EAST', 'YEAST']
+['QUA', 'FADE', 'GRABS', 'CASTE', 'CAST', 'DEAF', 'CASTED', 'CASTLE', 'BAGS', 'QUANS', 'BAG', 'BUG', 'DEFEAT', 'FADED', 'DEFACTO', 'EAST', 'YEAST']
 
 def create_cube_coordinates(input_list):
 
